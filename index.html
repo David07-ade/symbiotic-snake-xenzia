@@ -42,6 +42,28 @@
         white-space: pre-wrap;
         min-height: 3em;
       }
+      /* Mobile arrow controls */
+      #controls {
+        display: none;
+        margin: 15px auto;
+      }
+      .arrow-btn {
+        background: #bfff00;
+        border: none;
+        color: black;
+        font-size: 24px;
+        width: 60px;
+        height: 60px;
+        border-radius: 10px;
+        margin: 5px;
+      }
+      @media (max-width: 768px) {
+        #controls {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+      }
     </style>
   </head>
   <body>
@@ -64,6 +86,18 @@
     <!-- Game canvas -->
     <canvas id="gameCanvas" width="400" height="400"></canvas>
 
+    <!-- Mobile controls -->
+    <div id="controls">
+      <div>
+        <button class="arrow-btn" onclick="setDirection('up')">↑</button>
+      </div>
+      <div>
+        <button class="arrow-btn" onclick="setDirection('left')">←</button>
+        <button class="arrow-btn" onclick="setDirection('down')">↓</button>
+        <button class="arrow-btn" onclick="setDirection('right')">→</button>
+      </div>
+    </div>
+
     <!-- Game over -->
     <div id="gameOver" style="display: none">
       <h2 id="finalMsg"></h2>
@@ -82,6 +116,7 @@
       const factEl = document.getElementById("fact");
       const playerNameInput = document.getElementById("playerName");
       const hudName = document.getElementById("hudName");
+      const controls = document.getElementById("controls");
 
       let snake, apple, dx, dy, score, gameInterval, gameActive, playerName;
       let swipeStartX, swipeStartY, swipeEndX, swipeEndY;
@@ -179,6 +214,7 @@
         gameOver.style.display = "none";
         hud.style.display = "block";
         canvas.style.display = "block";
+        controls.style.display = "flex"; // show arrows only during gameplay
 
         initGame();
 
@@ -191,6 +227,7 @@
         clearInterval(gameInterval);
         canvas.style.display = "none";
         hud.style.display = "none";
+        controls.style.display = "none"; // hide arrows after game ends
         gameOver.style.display = "flex";
 
         const insight =
@@ -219,6 +256,7 @@
         gameOver.style.display = "none";
         hud.style.display = "none";
         canvas.style.display = "none";
+        controls.style.display = "none"; // hide arrows until next game starts
       }
 
       // Keyboard controls
@@ -239,7 +277,7 @@
         }
       });
 
-      // Touch swipe controls for mobile
+      // Touch swipe controls
       canvas.addEventListener("touchstart", (e) => {
         const t = e.touches[0];
         swipeStartX = t.clientX;
@@ -274,6 +312,24 @@
           } // up
         }
       });
+
+      // Arrow button controls
+      function setDirection(dir) {
+        if (!gameActive) return;
+        if (dir === "left" && dx === 0) {
+          dx = -box;
+          dy = 0;
+        } else if (dir === "up" && dy === 0) {
+          dx = 0;
+          dy = -box;
+        } else if (dir === "right" && dx === 0) {
+          dx = box;
+          dy = 0;
+        } else if (dir === "down" && dy === 0) {
+          dx = 0;
+          dy = box;
+        }
+      }
 
       document.getElementById("startBtn").addEventListener("click", startGame);
     </script>
